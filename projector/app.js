@@ -1,16 +1,27 @@
-const Noble = require("noble");
-const BeaconScanner = require("node-beacon-scanner");
+const noble = require("noble");
 
-var scanner = new BeaconScanner();
-
-scanner.onadvertisement = (advertisement) => {
-    var beacon = advertisement["iBeacon"];
-    beacon.rssi = advertisement["rssi"];
-    console.log(JSON.stringify(beacon, null, "    "))
-};
-
-scanner.startScan().then(() => {
-    console.log("Scanning for BLE devices...")  ;
-}).catch((error) => {
-    console.error(error);
+noble.on('stateChange', state => {
+    if (state === 'poweredOn') {
+        console.log('Scanning');
+    } else {
+        noble.stopScanning();
+    }
 });
+
+noble.on('discover', peripheral => {
+    // connect to the first peripheral that is scanned
+    const name = peripheral.advertisement.localName;
+    if (name.toLowerCase().indexOf('esp32') >= 0) {
+        noble.stopScanning();
+        console.log(`Connecting to '${name}' ${peripheral.id}`);
+        connectAndSetUp(peripheral);
+    }
+});
+
+function connectAndSetUp(peripheral) {
+    peripheral.connect(error => {
+        console.log('Connected to', peripheral.id);
+    });
+
+    peripheral.on('disconnect', () => console.log('disconnected'));
+}
