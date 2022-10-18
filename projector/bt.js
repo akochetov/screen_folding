@@ -56,6 +56,7 @@ module.exports.isConnected = async function (deviceMAC) {
 };
 
 module.exports.sendData = function (message) {
+    console.log("Sending message to bluetooth device: " + message);
     serialPort.write(message, function (err) {
         if (err) {
             return console.log("Error on write: ", err.message);
