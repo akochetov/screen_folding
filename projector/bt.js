@@ -14,8 +14,10 @@ rfcomm = function (deviceMAC, cmd) {
                 if (stderr) {
                     console.log(`stderr: ${stderr}`);
                 }
-                if (stdout) {
+                if (stdout && stdout.indexOf("rfcomm0") == 0) {
                     console.log(`stdout: ${stdout}`);
+                    resolve(stdout);
+                    return;
                 }
                 reject();
             }
@@ -38,6 +40,7 @@ module.exports.release = function (deviceMAC) {
 module.exports.isConnected = async function (deviceMAC) {
     try {
         const status = await rfcomm(deviceMAC, "show");
+
         return status && status.indexOf(deviceMAC) >= 0;
     }
     catch {

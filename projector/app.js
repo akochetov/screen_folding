@@ -27,10 +27,11 @@ if (!bt.isConnected(btConfig.deviceMAC))
     bt.bind(btConfig.deviceMAC)
     .then(() => {
         console.log("Bluetooth channel connected.");
-
-        console.log("Start pinging projector...");
-        ping.ping(projectorHost, onOnline, onOffline);
     })
     .catch(() => {
         console.log("Couldn't bind bluetooth device channel. Exiting.");
     });
+
+ console.log("Start pinging projector...");
+ ping.ping(projectorHost, onOnline, onOffline);
+
