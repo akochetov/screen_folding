@@ -1,4 +1,3 @@
-const serialport = require("serialport");
 const { exec } = require("child_process");
 
 rfcomm = function (deviceMAC, cmd) {
@@ -49,6 +48,8 @@ module.exports.isConnected = async function (deviceMAC) {
 };
 
 module.exports.sendData = function (message, baudRate) {
+    const serialport = require("serialport");
+    
     const path = "/dev/rfcomm0";
 
     const serialPort = new serialport.SerialPort({ path: path, baudRate: baudRate });
