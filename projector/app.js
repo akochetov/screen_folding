@@ -1,27 +1,13 @@
-const noble = require("noble");
+const serialport = require("serialport");
+const path  = "/dev/rfcomm0";
+const baudRate = 115200;
+const message = "Hakuna Matata";
 
-noble.on('stateChange', state => {
-    if (state === 'poweredOn') {
-        console.log('Scanning');
-    } else {
-        noble.stopScanning();
-    }
+const serialPort = new serialport.SerialPort({ path: path, baudRate: baudRate});
+
+serialPort.write(message, function(err) {
+  if (err) {
+    return console.log("Error on write: ", err.message);
+  }
+  console.log("Message sent successfully");
 });
-
-noble.on('discover', peripheral => {
-    // connect to the first peripheral that is scanned
-    const name = peripheral.advertisement.localName;
-    if (name.toLowerCase().indexOf('esp32') >= 0) {
-        noble.stopScanning();
-        console.log(`Connecting to '${name}' ${peripheral.id}`);
-        connectAndSetUp(peripheral);
-    }
-});
-
-function connectAndSetUp(peripheral) {
-    peripheral.connect(error => {
-        console.log('Connected to', peripheral.id);
-    });
-
-    peripheral.on('disconnect', () => console.log('disconnected'));
-}

@@ -2,6 +2,6 @@
   "requires": true,
   "lockfileVersion": 0,
   "dependencies": {
-    "noble": "^1.9.1"
+    "serialport": "^10.4.0"
   }
 }
