@@ -11,16 +11,17 @@ module.exports.ping = async function (host, onOnline, onOffline) {
     exec(command, (error, stdout, stderr) => {
         if (error) {
             console.log(`Ping error: ${error.message}`);
+            onOffline();
+            return;
         }
         if (stderr) {
             console.log(`Ping stderr: ${stderr}`);
+            onOffline();
+            return;
         }
         if (stdout) {
             console.log(`Ping stdout: ${stdout}`);
-            if (stdout.indexOf("1 received") >= 0)
-                onOnline();
-            else
-                onOffline();
+            onOnline();
         }
     });
     await delay(2000);
