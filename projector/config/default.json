@@ -4,5 +4,6 @@
         "deviceMAC": "E0:E2:E6:0C:4C:82",
         "baudRate":115200
     },
-    "stopInterval": 7000 
+    "stopInterval": 47000,
+    "rollUpIfNoPings": 10
   }

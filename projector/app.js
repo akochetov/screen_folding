@@ -5,14 +5,19 @@ const ping = require('./ping');
 const btConfig = config.get('bluetooth');
 const projectorHost = config.get('projectorHost');
 const stopInterval = config.get('stopInterval');
+const rollUpIfNoPings = config.get('rollUpIfNoPings');
 
 var isDown = false;
+var noPingCount = 0;
 
 function stop() {
     bt.sendData("STOP");
 }
 
 function onOnline() {
+    // reset count of no-pings
+    noPingCount = 0;
+    
     if (isDown) return;
 
     // projector is online - roll the screen down
@@ -24,6 +29,12 @@ function onOnline() {
 
 function onOffline() {
     if (!isDown) return;
+
+    if (noPingCount < rollUpIfNoPings ) {
+        noPingCount++;
+        return;
+    }
+
     // project is now off - roll the screen up
     bt.sendData("UP");
     isDown = false;
