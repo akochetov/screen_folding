@@ -1,4 +1,8 @@
 const { exec } = require("child_process");
+const serialport = require("serialport");
+
+const path = "/dev/rfcomm0";
+var serialPort = null;
 
 rfcomm = function (deviceMAC, cmd) {
     return new Promise((resolve, reject) => {
@@ -28,6 +32,10 @@ rfcomm = function (deviceMAC, cmd) {
     });
 };
 
+module.exports.init = function (baudRate) {
+    serialPort = new serialport.SerialPort({ path: path, baudRate: baudRate })
+}
+
 module.exports.bind = function (deviceMAC) {
     return rfcomm(deviceMAC, "bind");
 };
@@ -47,13 +55,7 @@ module.exports.isConnected = async function (deviceMAC) {
     }
 };
 
-module.exports.sendData = function (message, baudRate) {
-    const serialport = require("serialport");
-    
-    const path = "/dev/rfcomm0";
-
-    const serialPort = new serialport.SerialPort({ path: path, baudRate: baudRate });
-
+module.exports.sendData = function (message) {
     serialPort.write(message, function (err) {
         if (err) {
             return console.log("Error on write: ", err.message);

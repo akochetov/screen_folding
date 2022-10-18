@@ -7,12 +7,12 @@ const projectorHost = config.get('projectorHost');
 const stopInterval = config.get('stopInterval');
 
 function stop() {
-    bt.sendData("STOP", btConfig.baudRate);
+    bt.sendData("STOP");
 }
 
 function onOnline() {
     // projector is online - roll the screen down
-    bt.sendData("DOWN", btConfig.baudRate);
+    bt.sendData("DOWN");
 
     // stop rolling it down after certain timeout
     setTimeout(stop, stopInterval);
@@ -20,8 +20,10 @@ function onOnline() {
 
 function onOffline() {
     // project is now off - roll the screen up
-    bt.sendData("UP", btConfig.baudRate);
+    bt.sendData("UP");
 }
+
+bt.init(btConfig.baudRate);
 
 if (!bt.isConnected(btConfig.deviceMAC))
     bt.bind(btConfig.deviceMAC)
