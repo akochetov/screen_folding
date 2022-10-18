@@ -2,6 +2,7 @@
   "requires": true,
   "lockfileVersion": 0,
   "dependencies": {
+    "config": "^3.3.8",
     "serialport": "^10.4.0"
   }
 }

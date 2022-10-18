@@ -1,6 +1,3 @@
-curl -fsSL https://deb.nodesource.com/setup_17.x | bash -
-sudo apt-get update
-sudo apt install nodejs
-sudo apt install npm
-npm install -g npm@8.19.2
-npm install
+sudo bluetoothctl scan on
+sudo rfcomm bind /dev/rfcomm0 E0:E2:E6:0C:4C:82 1
+
