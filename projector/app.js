@@ -40,17 +40,21 @@ function onOffline() {
     isDown = false;
 }
 
-bt.init(btConfig.baudRate);
+function doit() {
+  bt.init(btConfig.baudRate);
 
-if (!bt.isConnected(btConfig.deviceMAC))
-    bt.bind(btConfig.deviceMAC)
-    .then(() => {
-        console.log("Bluetooth channel connected.");
-    })
-    .catch(() => {
-        console.log("Couldn't bind bluetooth device channel. Exiting.");
-    });
+  console.log("Start pinging projector...");
+  ping.ping(projectorHost, onOnline, onOffline);
+}
 
- console.log("Start pinging projector...");
- ping.ping(projectorHost, onOnline, onOffline);
+async function init_and_start() {
+  const isConnected = await bt.isConnected(btConfig.deviceMAC);
+  console.log(isConnected);
+  if (!isConnected)
+    await bt.bind(btConfig.deviceMAC);
+  console.log("Bluetooth channel connected.");
+  doit();
+}
+
+init_and_start();
 

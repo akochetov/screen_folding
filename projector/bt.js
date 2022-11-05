@@ -6,29 +6,35 @@ var serialPort = null;
 
 rfcomm = function (deviceMAC, cmd) {
     return new Promise((resolve, reject) => {
-        const command = `sudo rfcomm ${cmd} /dev/rfcomm0 ${deviceMAC} 1`;
+        const command = `rfcomm ${cmd} /dev/rfcomm0 ${deviceMAC} 1`;
         console.log("Sending command: " + command);
-        exec(command, (error, stdout, stderr) => {
-            if (error || stderr || stdout) {
-                console.log("Command response was: ");
-                if (error) {
-                    console.log(`error: ${error.message}`);
-                }
-                if (stderr) {
-                    console.log(`stderr: ${stderr}`);
-                }
-                if (stdout && stdout.indexOf("rfcomm0") == 0) {
-                    console.log(`stdout: ${stdout}`);
+          exec(command, (error, stderr, stdout) => {
+          if (stderr || stdout) {
+              console.log("Command response was: ");
+              if (error) {
+                  console.log(`error: ${error.message}`);
+              }
+              if (stderr) {
+                  console.error(`stderr: ${stderr}`);
+                  if (stderr.indexOf("rfcomm0") == 0) {
+                    resolve(stderr);
+                    return;
+                  }
+              }
+              if (stdout) {
+                  console.log(`stdout: ${stdout}`);
+                  if (stdout.indexOf("rfcomm0") == 0) {
                     resolve(stdout);
                     return;
-                }
-                reject();
-            }
-            else {
-                console.log("Command returned no response = OK");
-                resolve();
-            }
-        });
+                  }
+              }
+             reject();
+          }
+          else {
+              console.log("Command returned no response = OK");
+              resolve();
+          }
+         });
     });
 };
 
@@ -47,7 +53,7 @@ module.exports.release = function (deviceMAC) {
 module.exports.isConnected = async function (deviceMAC) {
     try {
         const status = await rfcomm(deviceMAC, "show");
-
+        console.log("status"+status);
         return status && status.indexOf(deviceMAC) >= 0;
     }
     catch {
