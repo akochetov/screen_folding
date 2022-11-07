@@ -1,3 +1,6 @@
+const process = require('process');
+process.chdir(__dirname);
+
 const config = require('config');
 const bt = require('./bt');
 const ping = require('./ping');
