@@ -1,20 +1,51 @@
 const process = require('process');
 process.chdir(__dirname);
 
+const http = require('http');
 const config = require('config');
-const bt = require('./bt');
 const ping = require('./ping');
 
-const btConfig = config.get('bluetooth');
 const projectorHost = config.get('projectorHost');
+const screenHost = config.get('screenHost');
 const stopInterval = config.get('stopInterval');
 const rollUpIfNoPings = config.get('rollUpIfNoPings');
+
+const SIGNAL_UP = "UP";
+const SIGNAL_DOWN = "DOWN";
+const SIGNAL_STOP = "STOP";
 
 var isDown = false;
 var noPingCount = 0;
 
+function send(signal) {
+  https.get(`http://${screenHost}/${signal}`, (resp) => {
+    let data = '';
+  
+    // A chunk of data has been received.
+    resp.on('data', (chunk) => {
+      data += chunk;
+    });
+  
+    // The whole response has been received. Print out the result.
+    resp.on('end', () => {
+      console.log(JSON.parse(data).explanation);
+    });
+  
+  }).on("error", (err) => {
+    console.log("Error: " + err.message);
+  });
+}
+
+function up() {
+  send(SIGNAL_UP);
+}
+
+function down() {
+  send(SIGNAL_DOWN);
+}
+
 function stop() {
-    bt.sendData("STOP");
+  send(SIGNAL_STOP);
 }
 
 function onOnline() {
@@ -24,7 +55,8 @@ function onOnline() {
     if (isDown) return;
 
     // projector is online - roll the screen down
-    bt.sendData("DOWN");
+    down();
+
     isDown = true;
     // stop rolling it down after certain timeout
     setTimeout(stop, stopInterval);
@@ -39,23 +71,17 @@ function onOffline() {
     }
 
     // project is now off - roll the screen up
-    bt.sendData("UP");
+    up();
+
     isDown = false;
 }
 
 function doit() {
-  bt.init(btConfig.baudRate);
-
   console.log("Start pinging projector...");
   ping.ping(projectorHost, onOnline, onOffline);
 }
 
 async function init_and_start() {
-  const isConnected = await bt.isConnected(btConfig.deviceMAC);
-  console.log(isConnected);
-  if (!isConnected)
-    await bt.bind(btConfig.deviceMAC);
-  console.log("Bluetooth channel connected.");
   doit();
 }
 

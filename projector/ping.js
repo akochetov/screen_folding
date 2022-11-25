@@ -21,6 +21,7 @@ module.exports.ping = async function (host, onOnline, onOffline) {
         if (stdout) {
             console.log(`Ping stdout: ${stdout}`);
             onOnline();
+            return;
         }
     });
     await delay(2000);
