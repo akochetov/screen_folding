@@ -18,7 +18,7 @@ var isDown = false;
 var noPingCount = 0;
 
 function send(signal) {
-  https.get(`http://${screenHost}/${signal}`, (resp) => {
+  http.get(`http://${screenHost}/${signal}`, (resp) => {
     let data = '';
   
     // A chunk of data has been received.
