@@ -1,8 +1,11 @@
-#include "BluetoothSerial.h"
+#include <WiFi.h>
+#include <WiFiClient.h>
+#include <WebServer.h>
+#include <HTTPUpdateServer.h>
 
-#if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
-#error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
-#endif
+#include <ESPmDNS.h>
+
+#include "secret.hpp"
 
 int RELAY_PIN_UP = 12;
 int RELAY_PIN_DOWN = 4;
@@ -11,41 +14,63 @@ int PRESS_TIME_MS = 1000;
 
 int LED_BUILTIN = 2;
 
-String strSignal;
-String SIGNAL_UP = "UP";
-String SIGNAL_DOWN = "DOWN";
-String SIGNAL_STOP = "STOP";
+String SIGNAL_UP = "/UP";
+String SIGNAL_DOWN = "/DOWN";
+String SIGNAL_STOP = "/STOP";
 
-// create bluetooth instance
-BluetoothSerial SerialBT;
+const char* host = "projector_screen";
 
-void initBT() {
-  Serial.println("Starting bluetooth...");
-  if (!SerialBT.begin("ScreenRoller"))
-    Serial.println("An error occurred initializing Bluetooth");
-  else 
-    Serial.println("Bluetooth started.");
+WebServer httpServer(80);
+HTTPUpdateServer httpUpdater;
+
+void initWiFi() {
+  // Connect to WiFi network
+  WiFi.begin(ssid, password);
+  Serial.println("");
+
+  // Wait for connection
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("");
+  Serial.print("Connected to ");
+  Serial.println(ssid);
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
 }
 
-void setup() {
-  // initialize serial communication at 9600 bits per second:
-  Serial.begin(115200);
+void initWebServer() {
+  /*use mdns for host name resolution*/
+  if (!MDNS.begin(host)) { 
+    Serial.println("Error setting up MDNS responder!");
+    while (1) {
+      delay(1000);
+    }
+  }
+  Serial.println("mDNS responder started");
 
-  Serial.println("Booted up. Proceeding with setup...");
+  httpUpdater.setup(&httpServer);
 
-  pinMode(RELAY_PIN_UP, OUTPUT);
-  pinMode(RELAY_PIN_DOWN, OUTPUT);
+  httpServer.on(SIGNAL_UP, HTTP_GET, []() {
+    httpServer.sendHeader("Connection", "close");
+    up();
+    httpServer.send(200, "text/plain", "OK");
+  });
 
-  pinMode(LED_BUILTIN, OUTPUT);
+  httpServer.on(SIGNAL_DOWN, HTTP_GET, []() {
+    httpServer.sendHeader("Connection", "close");
+    down();
+    httpServer.send(200, "text/plain", "OK");
+  });
 
-  // start bluetooth
-  initBT();
+  httpServer.on(SIGNAL_STOP, HTTP_GET, []() {
+    httpServer.sendHeader("Connection", "close");
+    stop();
+    httpServer.send(200, "text/plain", "OK");
+  });
 
-  digitalWrite(LED_BUILTIN, HIGH);
-  delay(2000);
-  digitalWrite(LED_BUILTIN, LOW); 
-
-  Serial.println("The device started, now you can pair it with bluetooth.");
+  httpServer.begin();
 }
 
 void up() {
@@ -74,19 +99,26 @@ void stop() {
   Serial.println("Done.");
 }
 
-void loop() {
-  // print out whatever comes from bluetooth
-  if (SerialBT.available()) {
-    strSignal = SerialBT.readString();
+/*
+ * setup function
+ */
+void setup(void) {
+  Serial.begin(115200);
 
-    Serial.println(strSignal);
+  pinMode(RELAY_PIN_UP, OUTPUT);
+  pinMode(RELAY_PIN_DOWN, OUTPUT);
 
-    digitalWrite(LED_BUILTIN, HIGH); 
-    if (strSignal == SIGNAL_UP) up();
-    if (strSignal == SIGNAL_DOWN) down();
-    if (strSignal == SIGNAL_STOP) stop();
-    digitalWrite(LED_BUILTIN, LOW); 
-  }
+  pinMode(LED_BUILTIN, OUTPUT);
 
-  delay(10);
+  initWiFi();
+  initWebServer();
+
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(2000);
+  digitalWrite(LED_BUILTIN, LOW); 
+}
+
+void loop(void) {
+  httpServer.handleClient();
+  delay(1);
 }
