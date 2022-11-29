@@ -3,12 +3,17 @@ process.chdir(__dirname);
 
 const http = require('http');
 const config = require('config');
-const ping = require('./ping');
+
+const status_ping = require('./monitors/ping');
+const status_hdmi = require('./monitors/hdmi');
+const lirc = require('./lirc');
 
 const projectorHost = config.get('projectorHost');
 const screenHost = config.get('screenHost');
 const stopInterval = config.get('stopInterval');
 const rollUpIfNoPings = config.get('rollUpIfNoPings');
+const irCommandsStartDelay = config.get('irCommandsStartDelay');
+const irCommands = config.get('irCommands');
 
 const SIGNAL_UP = "UP";
 const SIGNAL_DOWN = "DOWN";
@@ -48,6 +53,25 @@ function stop() {
   send(SIGNAL_STOP);
 }
 
+function sendIRCommands() {
+  // turning sound bar on goes first
+  lirc.sendCommand(irCommands.soundbarAudioIn.values());
+  
+  // screen connection on
+  lirc.sendCommand(irCommands.projectorCorrection.values());
+
+  // vertical correction
+  lirc.sendCommand(irCommands.projectorUp.values());
+  lirc.sendCommand(irCommands.projectorDown.values());
+  
+  // horizontal correction
+  lirc.sendCommand(irCommands.projectorLeft.values());
+  lirc.sendCommand(irCommands.projectorRight.values());
+
+  // screen connection on
+  lirc.sendCommand(irCommands.projectorCorrection.values());
+}
+
 function onOnline() {
     // reset count of no-pings
     noPingCount = 0;
@@ -56,6 +80,9 @@ function onOnline() {
 
     // projector is online - roll the screen down
     down();
+
+    // schedule IR commands
+    setTimeout(sendIRCommands, irCommandsStartDelay);
 
     isDown = true;
     // stop rolling it down after certain timeout
@@ -78,7 +105,9 @@ function onOffline() {
 
 function doit() {
   console.log("Start pinging projector...");
-  ping.ping(projectorHost, onOnline, onOffline);
+
+  status_ping.ping(projectorHost, onOnline, onOffline);
+  status_hdmi.ping(onOnline, onOffline);
 }
 
 async function init_and_start() {

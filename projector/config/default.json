@@ -2,5 +2,38 @@
     "projectorHost": "192.168.0.11",
     "screenHost": "192.168.0.127",
     "stopInterval": 39000,
-    "rollUpIfNoPings": 5
+    "rollUpIfNoPings": 5,
+    "irCommandsStartDelay": 3000,
+    "irCommands": {
+        "soundbarAudioIn": {
+            "device": "soundbar",
+            "command": "audioin",
+            "repeat": 1
+        },
+        "projectorCorrection": {
+            "device": "projector",
+            "command": "screen_correction",
+            "repeat": 1
+        },
+        "projectorLeft": {
+            "device": "projector",
+            "command": "left",
+            "repeat": 0
+        },
+        "projectorRight": {
+            "device": "projector",
+            "command": "right",
+            "repeat": 0
+        },
+        "projectorUp": {
+            "device": "projector",
+            "command": "up",
+            "repeat": 0
+        },
+        "projectorDown": {
+            "device": "projector",
+            "command": "down",
+            "repeat": 0
+        }
+    }
 }
