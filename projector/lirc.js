@@ -1,15 +1,22 @@
-// https://github.com/alexbain/lirc_node
+const { exec } = require("child_process");
 
-// Sending commands
-lirc_node = require('lirc_node');
-lirc_node.init();
-
-// To see all of the remotes and commands that LIRC knows about:
-console.log(lirc_node.remotes);
-
-module.exports.sendCommand = function (device, command, repeat) {
-    for (let i = 0; i < repeat; i++)
-        lirc_node.irsend.send_once(device, command, function() {
-            console.log(`Sent command ${command} to device ${device}.`);
-        });
+module.exports.sendCommand = function (device, key, repeat) {
+    for (let i = 0; i < repeat; i++) {
+      const command = `sudo irsend SEND_ONCE ${device} ${key}`;
+      console.log('Sending command: '+command);
+      exec(command, (error, stdout, stderr) => {
+        if (error) {
+            console.log(`irrsend error: ${error.message}`);
+            return;
+        }
+        if (stderr) {
+            console.log(`irrsend stderr: ${stderr}`);
+            return;
+        }
+        if (stdout) {
+            console.log(`irrsemd stdout: ${stdout}`);
+            return;
+        }
+    });
+  }
 }

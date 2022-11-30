@@ -55,21 +55,21 @@ function stop() {
 
 function sendIRCommands() {
   // turning sound bar on goes first
-  lirc.sendCommand(irCommands.soundbarAudioIn.values());
-  
+  setTimeout(function(){lirc.sendCommand(...Object.values(irCommands.soundbarAudioIn))}, 100);
+
   // screen connection on
-  lirc.sendCommand(irCommands.projectorCorrection.values());
+  setTimeout(function(){lirc.sendCommand(...Object.values(irCommands.projectorCorrection))}, 1000);
 
   // vertical correction
-  lirc.sendCommand(irCommands.projectorUp.values());
-  lirc.sendCommand(irCommands.projectorDown.values());
+  setTimeout(function(){lirc.sendCommand(...Object.values(irCommands.projectorUp))}, 2000);
+  setTimeout(function(){lirc.sendCommand(...Object.values(irCommands.projectorDown))}, 3000);
   
   // horizontal correction
-  lirc.sendCommand(irCommands.projectorLeft.values());
-  lirc.sendCommand(irCommands.projectorRight.values());
+  setTimeout(function(){lirc.sendCommand(...Object.values(irCommands.projectorLeft))}, 4000);
+  setTimeout(function(){lirc.sendCommand(...Object.values(irCommands.projectorRight))}, 5000);
 
   // screen connection on
-  lirc.sendCommand(irCommands.projectorCorrection.values());
+  setTimeout(function(){lirc.sendCommand(...Object.values(irCommands.projectorCorrection))}, 6000);
 }
 
 function onOnline() {
@@ -113,6 +113,8 @@ function doit() {
 async function init_and_start() {
   doit();
 }
+
+sendIRCommands();
 
 init_and_start();
 
