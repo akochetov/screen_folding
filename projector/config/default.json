@@ -6,33 +6,33 @@
     "irCommandsStartDelay": 3000,
     "irCommands": {
         "soundbarAudioIn": {
-            "device": "soundbar",
-            "command": "audioin",
+            "device": "HTL2153",
+            "command": "KEY_AUDIO",
             "repeat": 1
         },
         "projectorCorrection": {
-            "device": "projector",
-            "command": "screen_correction",
+            "device": "EHTW5705",
+            "command": "KEY_SCREENCORRECTION",
             "repeat": 1
         },
         "projectorLeft": {
-            "device": "projector",
-            "command": "left",
+            "device": "EHTW5705",
+            "command": "KEY_LEFT",
             "repeat": 0
         },
         "projectorRight": {
-            "device": "projector",
-            "command": "right",
+            "device": "EHTW5705",
+            "command": "KEY_RIGHT",
             "repeat": 0
         },
         "projectorUp": {
-            "device": "projector",
-            "command": "up",
+            "device": "EHTW5705",
+            "command": "KEY_UP",
             "repeat": 0
         },
         "projectorDown": {
-            "device": "projector",
-            "command": "down",
+            "device": "EHTW5705",
+            "command": "KEY_DOWN",
             "repeat": 0
         }
     }
