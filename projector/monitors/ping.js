@@ -9,19 +9,26 @@ function delay(time) {
 
 module.exports.isOnline = async function (host) {
     const command = `ping -i 1 -W 1 -v -c 1 ${host}`;
-    const {error, stdout, stderr} = await exec(command);
+    
+    try {
+        const {error, stdout, stderr} = await exec(command);
 
-    if (error) {
-        console.log(`Ping error: ${error.message}`);
-        return false
-    }
-    if (stderr) {
-        console.log(`Ping stderr: ${stderr}`);
-        return false
-    }
+        if (error) {
+            console.log(`Ping error: ${error.message}`);
+            return false
+        }
+        if (stderr) {
+            console.log(`Ping stderr: ${stderr}`);
+            return false
+        }
 
-    console.log(`${command} returned: ${stdout}`);
-    return true;
+        console.log(`${command} returned: ${stdout}`);
+        return true;
+    }
+    catch {
+        console.log(`Ping error`);
+        return false;
+    }
 }
 
 module.exports.ping = async function (host, onOnline, onOffline) {
