@@ -2,8 +2,6 @@
   "requires": true,
   "lockfileVersion": 0,
   "dependencies": {
-    "config": "^3.3.8",
-    "lirc_node": "0.0.4",
-    "serialport": "^10.4.0"
+    "config": "^3.3.8"
   }
 }

@@ -12,7 +12,7 @@
 
 case "$1" in
 	start)
-                sudo node /opt/screen_folding/projector/app.js
+                sudo node /opt/screen_folding/projector/app.js > log.txt 2>&1 &
 		;;
 	stop)
 		sudo killall node
