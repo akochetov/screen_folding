@@ -107,14 +107,16 @@ function doit() {
   console.log("Start pinging projector...");
 
   status_ping.ping(projectorHost, onOnline, onOffline);
-  status_hdmi.ping(onOnline, onOffline);
+//  status_hdmi.ping(onOnline, onOffline);
 }
 
 async function init_and_start() {
+  isDown = await status_ping.isOnline(projectorHost);
+
+  console.log(`Initial projector state at start: isDown = ${isDown}`);
+
   doit();
 }
-
-sendIRCommands();
 
 init_and_start();
 
