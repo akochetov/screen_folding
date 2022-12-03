@@ -6,14 +6,14 @@ const config = require('config');
 
 const status_ping = require('./monitors/ping');
 const status_hdmi = require('./monitors/hdmi');
-const lirc = require('./lirc');
+
+const irCommands = require('./ir_commands');
 
 const projectorHost = config.get('projectorHost');
 const screenHost = config.get('screenHost');
 const stopInterval = config.get('stopInterval');
 const rollUpIfNoPings = config.get('rollUpIfNoPings');
 const irCommandsStartDelay = config.get('irCommandsStartDelay');
-const irCommands = config.get('irCommands');
 
 const SIGNAL_UP = "UP";
 const SIGNAL_DOWN = "DOWN";
@@ -53,25 +53,6 @@ function stop() {
   send(SIGNAL_STOP);
 }
 
-function sendIRCommands() {
-  // turning sound bar on goes first
-  setTimeout(function(){lirc.sendCommand(...Object.values(irCommands.soundbarAudioIn))}, 100);
-
-  // screen connection on
-  setTimeout(function(){lirc.sendCommand(...Object.values(irCommands.projectorCorrection))}, 1000);
-
-  // vertical correction
-  setTimeout(function(){lirc.sendCommand(...Object.values(irCommands.projectorUp))}, 2000);
-  setTimeout(function(){lirc.sendCommand(...Object.values(irCommands.projectorDown))}, 3000);
-  
-  // horizontal correction
-  setTimeout(function(){lirc.sendCommand(...Object.values(irCommands.projectorLeft))}, 4000);
-  setTimeout(function(){lirc.sendCommand(...Object.values(irCommands.projectorRight))}, 5000);
-
-  // screen connection on
-  setTimeout(function(){lirc.sendCommand(...Object.values(irCommands.projectorCorrection))}, 6000);
-}
-
 function onOnline() {
     // reset count of no-pings
     noPingCount = 0;
@@ -82,7 +63,7 @@ function onOnline() {
     down();
 
     // schedule IR commands
-    setTimeout(sendIRCommands, irCommandsStartDelay);
+    setTimeout(irCommands.sendIRPreCommands, irCommandsStartDelay);
 
     isDown = true;
     // stop rolling it down after certain timeout
@@ -99,6 +80,9 @@ function onOffline() {
 
     // project is now off - roll the screen up
     up();
+
+    // schedule IR commands
+    irCommands.sendIRPostCommands();
 
     isDown = false;
 }

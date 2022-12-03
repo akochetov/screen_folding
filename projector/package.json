@@ -2,6 +2,10 @@
   "requires": true,
   "lockfileVersion": 0,
   "dependencies": {
-    "config": "^3.3.8"
+    "config": "^3.3.8",
+    "mocha": "^10.1.0"
+  },
+  "scripts": {
+    "test": "mocha"
   }
 }

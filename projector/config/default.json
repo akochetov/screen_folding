@@ -4,7 +4,7 @@
     "stopInterval": 39000,
     "rollUpIfNoPings": 5,
     "irCommandsStartDelay": 3000,
-    "irCommands": {
+    "irPreCommands": {
         "soundbarAudioIn": {
             "device": "HTL2153",
             "command": "KEY_AUDIO",
@@ -33,7 +33,14 @@
         "projectorDown": {
             "device": "EHTW5705",
             "command": "KEY_DOWN",
-            "repeat": 7
+            "repeat": 8
+        }
+    },
+    "irPostCommands": {
+        "soundbarPower": {
+            "device": "HTL2153",
+            "command": "KEY_POWER",
+            "repeat": 1
         }
     }
 }
