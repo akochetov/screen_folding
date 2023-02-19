@@ -5,8 +5,8 @@ const http = require('http');
 const config = require('config');
 
 const status_ping = require('./monitors/ping');
-const status_hdmi = require('./monitors/hdmi');
 
+const usbCommands = require('./utils/usb');
 const irCommands = require('./ir_commands');
 
 const projectorHost = config.get('projectorHost');
@@ -61,6 +61,10 @@ function onOnline() {
 
     // projector is online - roll the screen down
     down();
+
+    // turn usb off and then on to wake up BT audio USB stick
+    usbCommands.off();
+    usbCommands.on();
 
     // schedule IR commands
     setTimeout(irCommands.sendIRPreCommands, irCommandsStartDelay);
