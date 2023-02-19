@@ -2,14 +2,9 @@
     "projectorHost": "192.168.0.11",
     "screenHost": "192.168.0.127",
     "stopInterval": 39000,
-    "rollUpIfNoPings": 5,
+    "rollUpIfNoPings": 10,
     "irCommandsStartDelay": 3000,
     "irPreCommands": {
-        "soundbarAudioIn": {
-            "device": "HTL2153",
-            "command": "KEY_AUDIO",
-            "repeat": 5
-        },
         "projectorCorrection": {
             "device": "EHTW5705",
             "command": "KEY_SCREENCORRECTION",
@@ -33,9 +28,14 @@
         "projectorDown": {
             "device": "EHTW5705",
             "command": "KEY_DOWN",
-            "repeat": 8
+            "repeat": 5
+        },
+        "soundbarAudioIn": {
+            "device": "HTL2153",
+            "command": "KEY_AUDIO",
+            "repeat": 5
         }
-    },
+    }, 
     "irPostCommands": {
         "soundbarPower": {
             "device": "HTL2153",
