@@ -1,10 +1,9 @@
 const { exec } = require("child_process");
-const { sendCommand } = require("./lirc");
 
 const TOGGLE_ON = 1;
 const TOGGLE_OFF = 0;
 
-sendCommand = function (toggle) {
+const sendCommand = function (toggle) {
   const command = `echo ${toggle} | sudo tee /sys/devices/platform/soc/3f980000.usb/buspower > /dev/null`;
   console.log('Sending command: ' + command);
   exec(command, (error, stdout, stderr) => {

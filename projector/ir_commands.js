@@ -1,6 +1,6 @@
 const config = require('config');
 
-const lirc = require('./lirc');
+const lirc = require('./utils/lirc');
 
 const irPreCommands = config.get('irPreCommands');
 const irPostCommands = config.get('irPostCommands');
